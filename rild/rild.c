@@ -48,6 +48,10 @@ static void usage(const char *argv0) {
     exit(EXIT_FAILURE);
 }
 
+#ifdef QCOM_HARDWARE
+extern char rild[MAX_SOCKET_NAME_LENGTH];
+#endif
+
 extern void RIL_register (const RIL_RadioFunctions *callbacks);
 
 extern void RIL_register_socket (RIL_RadioFunctions *(*rilUimInit)
@@ -178,7 +182,7 @@ int main(int argc, char **argv) {
     }
     if (strncmp(clientId, "0", MAX_CLIENT_ID_LENGTH)) {
         if (RIL_setRilSocketName) {
-            RIL_setRilSocketName(clientId);
+            RIL_setRilSocketName(strncat(rild, clientId, MAX_SOCKET_NAME_LENGTH));
         } else {
             RLOGE("Trying to instantiate multiple rild sockets without a compatible libril!");
         }
